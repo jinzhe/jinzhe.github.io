@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>图片预览</title>
+<style>
+*{
+    margin:0;
+    padding:0;
+}
+.image{
+    width:100px;
+}
+</style>
+
+</head>
+<body>
+<div style="margin:auto;width:1000px">
+<img src="https://user-gold-cdn.xitu.io/2018/5/13/16359c7b4fffa97c?imageslim" class="image"><br>
+<img src="https://user-gold-cdn.xitu.io/2018/5/13/16359c7b4fffa97c?imageslim" class="image"><br>
+<img src="https://user-gold-cdn.xitu.io/2018/5/13/16359c7b4fffa97c?imageslim" class="image"><br>
+<img src="https://user-gold-cdn.xitu.io/2018/5/13/16359c7b4fffa97c?imageslim" class="image"><br>
+<img src="https://user-gold-cdn.xitu.io/2018/5/13/16359c7b4fffa97c?imageslim" class="image"><br>
+<img src="https://user-gold-cdn.xitu.io/2018/5/13/16359c7b4fffa97c?imageslim" class="image"><br>
+<img src="https://user-gold-cdn.xitu.io/2018/5/13/16359c7b4fffa97c?imageslim" class="image"><br>
+<img src="https://user-gold-cdn.xitu.io/2018/5/13/16359c7b4fffa97c?imageslim" class="image"><br>
+<img src="https://user-gold-cdn.xitu.io/2018/5/13/16359c7b4fffa97c?imageslim" class="image"><br>
+<img src="https://user-gold-cdn.xitu.io/2018/5/13/16359c7b4fffa97c?imageslim" class="image"><br>
+<img src="https://user-gold-cdn.xitu.io/2018/5/13/16359c7b4fffa97c?imageslim" class="image"><br>
+<img src="https://user-gold-cdn.xitu.io/2018/5/13/16359c7b4fffa97c?imageslim" class="image"><br>
+<img src="https://user-gold-cdn.xitu.io/2018/5/13/16359c7b4fffa97c?imageslim" class="image"><br>
+<img src="https://user-gold-cdn.xitu.io/2018/5/13/16359c7b4fffa97c?imageslim" class="image"><br>
+<img src="https://user-gold-cdn.xitu.io/2018/5/13/16359c7b4fffa97c?imageslim" class="image"><br>
+<img src="https://user-gold-cdn.xitu.io/2018/5/13/16359c7b4fffa97c?imageslim" class="image"><br>
+<img src="https://user-gold-cdn.xitu.io/2018/5/13/16359c7b4fffa97c?imageslim" class="image"><br>
+<img src="https://user-gold-cdn.xitu.io/2018/5/13/16359c7b4fffa97c?imageslim" class="image"><br>
+<img src="https://user-gold-cdn.xitu.io/2018/5/13/16359c7b4fffa97c?imageslim" class="image"><br>
+<img src="https://user-gold-cdn.xitu.io/2018/5/13/16359c7b4fffa97c?imageslim" class="image"><br>
+</div>
+</body>
+</html>
+
+<script>
+let container = document.documentElement||document.body;
+let img,div,src;
+let x,y,w,h,tx,ty,tw,th,ww,wh;
+let closeMove=function(){
+    if(div==undefined){
+        return false;
+    }
+    div.style.opacity=0;
+    img.style.height=h+"px";
+    img.style.width=w+"px";
+    img.style.left=x+"px";
+    img.style.top=(y - container.scrollTop)+"px";
+    // 延迟移除dom
+    setTimeout(function(){
+        div.remove();
+        img.remove();
+    },100);
+};
+
+let closeFade=function(){
+    if(div==undefined){
+        return false;
+    }
+    div.style.opacity=0;
+    img.style.opacity=0;
+    // 延迟移除dom
+    setTimeout(function(){
+        div.remove();
+        img.remove();
+    },100);
+};
+
+// 监听滚动关闭层
+document.addEventListener("scroll",function(){
+    closeFade();
+});
+document.querySelectorAll("img").forEach(v=>{
+    v.addEventListener("click",function(e){ // 注册事件
+        // 记录小图的位置个大小
+        x=e.target.offsetLeft;
+        y=e.target.offsetTop;
+        w=e.target.offsetWidth;
+        h=e.target.offsetHeight;
+        src=e.target.src;
+
+        // 创建遮罩层
+        div=document.createElement("div");
+        div.style.cssText=`
+            position:fixed;
+            left:0;
+            top:0;
+            bottom:0;
+            right:0;
+            background-color:#fff;
+            transition:all .3s cubic-bezier(0.165, 0.84, 0.44, 1);
+            opacity:0;
+        `;
+        document.body.appendChild(div);
+        setTimeout(function(){
+            div.style.opacity=1;
+        },0);
+        // (此处可以加loading)
+
+        // 创建副本
+        img=new Image();
+        img.src=src;
+        img.style.cssText=`
+            position:fixed;
+            left:${x}px;
+            top:${y - container.scrollTop}px;
+            width:${w}px;
+            height:${h}px;
+            transition:all .3s cubic-bezier(0.165, 0.84, 0.44, 1);
+            opacity:0;
+        `;
+        img.onload=function(){
+            document.body.appendChild(img);
+            // 浏览器宽高
+            wh=window.innerHeight;
+            ww=window.innerWidth;
+
+            // 目标宽高和坐标
+            tw=w/h*wh >> 0;
+            th=wh;
+            tx=(ww - tw) / 2;
+            ty=0;
+            
+            // 延迟写入否则不会有动画
+            setTimeout(function(){
+                img.style.opacity=1;
+                img.style.height=wh+"px";
+                img.style.width=tw+"px";
+                img.style.left=tx+"px";
+                img.style.top=ty+"px";
+                // 点击隐藏
+                div.onclick=img.onclick=closeMove;
+            },0);
+        };
+    });//end event
+});//end forEach
+</script>
